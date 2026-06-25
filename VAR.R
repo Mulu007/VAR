@@ -19,13 +19,6 @@ product  <- read_tsv("pc.product",  trim_ws = TRUE, show_col_types = FALSE)
 
 view(industry)
 
-# Joining
-series_lab <- series %>%
-  left_join(industry, by = "industry_code") %>%
-  left_join(product,  by = c("industry_code", "product_code"))
-
-view(series_lab)
-
 # Isolating 3-digit industry level series
 three_digit <- series %>%
   filter(str_detect(industry_code, "^[0-9]{3}---$"),
@@ -41,3 +34,4 @@ view(three_digit)
 three_digit %>% count(begin_year) %>% arrange(begin_year)
 three_digit %>% filter(begin_year >= 2003) %>% print(n = Inf)   # the late starters, named :34 industries from 2003
 three_digit %>% filter(begin_year <= 1993) %>% print(n = Inf)   # what's clean from 1993 :13 industries start from and before 1993
+
