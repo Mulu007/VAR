@@ -55,3 +55,19 @@ dat <- lapply(mfg_files, read_tsv, trim_ws = TRUE, show_col_types = FALSE) %>%
 # coverage check: chemicals should now reach 1984
 dat %>% filter(series_id == "PCU325---325---") %>%
   summarise(min_year = min(year), max_year = max(year), n = n())
+
+# 491/493 verification -> base year/ start year conflict
+# 491 (Postal Service) - monthly data every month from 1972
+# 493 (Warehousing) - data starts 1993:07
+postal <- read_tsv("pc.data.43.PostalService", trim_ws = TRUE, show_col_types = FALSE)
+ware   <- read_tsv("pc.data.45.WarehousingStorage", trim_ws = TRUE, show_col_types = FALSE)
+
+bind_rows(postal, ware) %>%
+  filter(series_id %in% c("PCU491---491---", "PCU493---493---"),
+         period != "M13") %>%
+  mutate(value = as.numeric(value)) %>%
+  filter(year <= 1996) %>%
+  group_by(series_id, year) %>%
+  summarise(months = n(), .groups = "drop") %>%
+  arrange(series_id, year) %>%
+  print(n = Inf)
