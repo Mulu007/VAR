@@ -1,0 +1,32 @@
+% requires \usepackage{booktabs, longtable}
+{\footnotesize
+\begin{longtable}{llp{5cm}cc}
+\caption{PPI industry series, manufacturing-core sample (1993:07--2026)}\label{tab:core}\\
+\toprule
+NAICS & Base & Industry & Start & End \\
+\midrule
+\endfirsthead
+\toprule
+NAICS & Base & Industry & Start & End \\
+\midrule
+\endhead
+\midrule\multicolumn{5}{r}{\textit{continued on next page}}\\
+\endfoot
+\bottomrule
+\endlastfoot
+211 & 1985:12 & Oil and gas extraction & 1985 & 2026 \\
+311 & 1984:12 & Food mfg & 1984 & 2026 \\
+324 & 1984:12 & Petroleum and coal products manufacturing & 1984 & 2026 \\
+325 & 1984:12 & Chemical mfg & 1984 & 2026 \\
+326 & 1984:12 & Plastics and rubber products mfg & 1984 & 2026 \\
+327 & 1984:12 & Nonmetallic mineral product manufacturing & 1984 & 2026 \\
+331 & 1984:12 & Primary metal mfg & 1984 & 2026 \\
+332 & 1984:12 & Fabricated metal product mfg & 1984 & 2026 \\
+337 & 1984:12 & Furniture \& related product mfg & 1984 & 2026 \\
+481 & 1992:12 & Air transportation & 1992 & 2026 \\
+491 & 1989:06 & U.S. Postal Service & 1972 & 2026 \\
+493 & 2006:12 & Warehousing and storage & 1993:07$^{a}$ & 2026 \\
+622 & 1992:12 & Hospitals & 1992 & 2026 \\
+\end{longtable}
+\par\vspace{-0.4em}\textit{Notes:}  All series are PPI net-output industry indexes, not seasonally adjusted. Series identifiers follow the pattern \texttt{PCU} + three-digit NAICS code, hyphen-padded to six characters and repeated (e.g.\ chemical manufacturing is \texttt{PCU325{-}{-}{-}325{-}{-}{-}}). Base is the index reference month. $^{a}$Warehousing and storage (493) is available monthly from 1993:07; the manufacturing-core panel begins 1993:07 so that every series is present from the first observation. 
+}
