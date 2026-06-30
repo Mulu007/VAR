@@ -2,6 +2,9 @@ library(readr)
 library(tidyverse)
 library(xtable)
 library(lubridate)
+library(ggplot2)
+library(tidyr)
+library(dplyr)
 
 # Downloading the BLS pc.series file
 download.file(
@@ -169,3 +172,116 @@ for (f in files) {
                   headers = c("User-Agent" = "uvb20@txst.edu"))
   }
 }
+
+# Reading every pc.data. downloaded
+data_files <- list.files(pattern = "^pc\\.data\\.[0-9]+\\.")
+
+raw <- bind_rows(lapply(data_files, function(f)               # read each, stack rows
+  read_tsv(f, trim_ws = TRUE, show_col_types = FALSE,
+           col_types = cols(.default = col_character())) %>%
+    mutate(series_id = str_trim(series_id))                   # defensive trim
+))
+
+# Keeping my 46 roster series, dropping annual averages and building proper monthly date
+long <- raw %>%
+  filter(series_id %in% roster$series_id, period != "M13") %>%
+  mutate(
+    month = as.integer(str_sub(period, 2, 3)),               # M07 -> 7
+    date  = make_date(as.integer(year), month, 1),           # -> 2007-07-01
+    value = suppressWarnings(as.numeric(value))              # index to numeric
+  ) %>%
+  filter(!is.na(value)) %>%                                   # drop any non-numeric
+  left_join(select(roster, series_id, naics, panel, excl),    # attach labels
+            by = "series_id") %>%
+  arrange(series_id, date)
+
+# Report to check if code run smoothly
+found <- long %>%
+  group_by(naics, panel) %>%
+  summarise(first = min(date), last = max(date), n = n(), .groups = "drop") %>%
+  arrange(panel, naics)
+print(found, n = Inf)
+
+missing <- roster %>%
+  filter(!series_id %in% long$series_id) %>%
+  select(naics, industry_name, panel)
+cat("\n--- MISSING (download these files if any appear) ---\n")
+print(missing, n = Inf)
+
+# Long table to wide
+# Each column becomes one industry by NAICS each row one month
+to_wide <- function(df) df %>%
+  select(date, naics, value) %>%
+  pivot_wider(names_from = naics, values_from = value) %>%
+  arrange(date)
+
+# Panel A (core): the 13 Panel-A series, window starting 1993:07
+core_ids <- roster %>% filter(panel == "A") %>% pull(series_id)
+panelA <- long %>%
+  filter(series_id %in% core_ids, date >= as.Date("1993-07-01")) %>%
+  to_wide()
+
+broad <- long %>%
+  filter(date >= as.Date("2004-01-01")) %>%
+  to_wide()
+
+dim(panelA); dim(broad)         # rows = months, cols = 1 date + industries
+cat("\nPanel A NA counts (want all 0):\n"); print(colSums(is.na(panelA)))
+cat("\nBroad NA counts (want all 0):\n");   print(colSums(is.na(broad)))
+
+saveRDS(panelA, "panelA_core_levels.rds")   # 1993:07-2026, 13 industries
+saveRDS(broad,  "broad_levels.rds")          # 2004:01-2026, 46 industries
+saveRDS(long,   "ppi_long.rds")              # tidy long form, for robustness pulls
+
+core_ids <- roster %>% filter(panel == "A") %>% pull(series_id)
+
+panelA <- long %>%
+  filter(series_id %in% core_ids, date >= as.Date("1993-07-01")) %>%
+  mutate(value = as.numeric(value)) %>%          # force numeric
+  group_by(date, naics) %>%
+  summarise(value = mean(value), .groups = "drop") %>%  # collapse any dupes
+  pivot_wider(names_from = naics, values_from = value) %>%
+  arrange(date)
+
+str(panelA)   # industry columns should now say "num", not "List"
+
+panelA_long <- panelA %>%
+  pivot_longer(-date, names_to = "naics", values_to = "index")
+
+class(panelA_long$index)   # should now be "numeric"
+
+long %>% filter(series_id %in% core_ids) %>%
+  count(date, naics) %>% filter(n > 1) %>% head(20)
+
+# Error fixing (data duplication)
+data_files <- list.files(pattern = "^pc\\.data\\.[0-9]+\\.")
+data_files <- data_files[!data_files %in%
+                           c("pc.data.0.Current", "pc.data.01.aggregates")]   # drop overlapping/aggregate files
+print(data_files)
+
+long <- raw %>%
+  filter(series_id %in% roster$series_id, period != "M13") %>%
+  mutate(month = as.integer(str_sub(period, 2, 3)),
+         date  = make_date(as.integer(year), month, 1),
+         value = suppressWarnings(as.numeric(value))) %>%
+  filter(!is.na(value)) %>%
+  distinct(series_id, date, .keep_all = TRUE) %>%      # <- remove duplicate rows
+  left_join(select(roster, series_id, naics, panel, excl), by = "series_id") %>%
+  arrange(series_id, date)
+
+long %>% filter(series_id %in% core_ids) %>%
+  count(date, naics) %>% filter(n > 1) %>% nrow()    # want 0
+
+compare <- c("324","325","326","331","622")
+panelA_idx <- panelA_long %>%
+  filter(naics %in% compare) %>%
+  group_by(naics) %>%
+  arrange(date) %>%
+  mutate(rebased = 100 * index / dplyr::first(index)) %>%   # <- namespaced
+  ungroup()
+
+ggplot(panelA_idx, aes(date, rebased, colour = naics)) +
+  geom_line() +
+  labs(title = "Oil-relevant industries, rebased to 100 at 1993:07",
+       x = NULL, y = "Index (1993:07 = 100)", colour = "NAICS") +
+  theme_minimal()
