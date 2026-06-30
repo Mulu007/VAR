@@ -14,12 +14,15 @@ download.file(
   headers = c("User-Agent" = "your_email@example.com")
 )
 
-# Reading in the reference tables
-series   <- read_tsv("pc.series",   trim_ws = TRUE, show_col_types = FALSE)
-industry <- read_tsv("pc.industry", trim_ws = TRUE, show_col_types = FALSE)
-product  <- read_tsv("pc.product",  trim_ws = TRUE, show_col_types = FALSE)
+# --- Reading in the reference tables ---
+series   <- read_tsv("pc.series",   trim_ws = TRUE, show_col_types = FALSE) %>%
+  mutate(across(where(is.character), str_trim))
+industry <- read_tsv("pc.industry", trim_ws = TRUE, show_col_types = FALSE) %>%
+  mutate(across(where(is.character), str_trim))
+product  <- read_tsv("pc.product",  trim_ws = TRUE, show_col_types = FALSE) %>%
+  mutate(across(where(is.character), str_trim))
 
-# Isolating 3-digit industry level series
+# --- Isolating 3-digit net-output totals (industry code == product code) ---
 three_digit <- series %>%
   filter(str_detect(industry_code, "^[0-9]{3}---$"),
          industry_code == product_code) %>%
@@ -28,72 +31,30 @@ three_digit <- series %>%
             base_date, begin_year, end_year) %>%
   arrange(industry_code)
 
-# Data availability checks by year
-# three_digit %>% count(begin_year) %>% arrange(begin_year)
-# three_digit %>% filter(begin_year >= 2003) %>% print(n = Inf)   # the late starters, named :34 industries from 2003
-# three_digit %>% filter(begin_year <= 1993) %>% print(n = Inf)   # what's clean from 1993 :13 industries start from and before 1993
-
-# Checking time series data from pc.data
-# Start from 1998 - 2026 months = 369 roughly 30 years
-# dat <- read_tsv("pc.data.0.Current", trim_ws = TRUE, show_col_types = FALSE)
-# names(dat)                                  # series_id, year, period, value, footnote_codes
-# dat %>% filter(series_id == "PCU325---325---") %>%
-#  summarise(min_year = min(year), max_year = max(year), n = n())
-
-# Per-subsector files therefore carry the complete history that current was truncating
-# Start from 1984 - 2026 = 539 months
-mfg_files <- c("pc.data.4.Food", "pc.data.13.PetroleumCoalProducts",
-               "pc.data.14.Chemicals", "pc.data.15.PlasticsRubberProducts",
-               "pc.data.16.NonmetallicMineral", "pc.data.17.PrimaryMetal",
-               "pc.data.18.FabricatedMetalProduct", "pc.data.1.OilAndGas")
-
-dat <- lapply(mfg_files, read_tsv, trim_ws = TRUE, show_col_types = FALSE) %>%
-  bind_rows()
-
-# coverage check: chemicals should now reach 1984
-dat %>% filter(series_id == "PCU325---325---") %>%
-  summarise(min_year = min(year), max_year = max(year), n = n())
-
-# 491/493 verification -> base year/ start year conflict
-# 491 (Postal Service) - monthly data every month from 1972
-# 493 (Warehousing) - data starts 1993:07
-postal <- read_tsv("pc.data.43.PostalService", trim_ws = TRUE, show_col_types = FALSE)
-ware   <- read_tsv("pc.data.45.WarehousingStorage", trim_ws = TRUE, show_col_types = FALSE)
-
-bind_rows(postal, ware) %>%
-  filter(series_id %in% c("PCU491---491---", "PCU493---493---"),
-         period != "M13") %>%
-  mutate(value = as.numeric(value)) %>%
-  filter(year <= 1996) %>%
-  group_by(series_id, year) %>%
-  summarise(months = n(), .groups = "drop") %>%
-  arrange(series_id, year) %>%
-  print(n = Inf)
-
-
-# Panel assignment (by begin_year) + flags
-# excluded from baseline models (margins / finance-info / weak oil linkage)
+# --- panel assignment (by data availability) + flags ---
+# excluded from baseline models (margins / finance-info / weak oil linkage); kept in panel just flagged only
 baseline_excluded <- c("423","424","441","444","445","455","456","458",
                        "516","517","523","524","721")
 
 roster <- three_digit %>%
   mutate(
     naics  = str_sub(industry_code, 1, 3),
-    panel  = case_when(begin_year <= 1993 ~ "A",
-                       begin_year <= 2002 ~ "B",
-                       begin_year <= 2021 ~ "C",
+    panel  = case_when(begin_year <= 1993 ~ "A",       # continuous from 1993
+                       begin_year <= 2002 ~ "B",       # 1996-1999 starters
+                       begin_year <= 2021 ~ "C",       # post-2003 rollout
                        TRUE               ~ "drop"),   # 2022 starters dropped
     base   = paste0(str_sub(base_date, 1, 4), ":", str_sub(base_date, 5, 6)),
     excl   = naics %in% baseline_excluded,
     rail   = naics == "482",
     industry_tex = str_replace_all(industry_name, "&", "\\\\&"),
     start  = as.character(begin_year),
-    start  = ifelse(series_id == "PCU493---493---", "1993$^{a}$", start)
+    start  = ifelse(series_id == "PCU493---493---", 
+                    "1993$^{a}$", as.character(begin_year))
   ) %>%
   filter(panel != "drop") %>%
   arrange(panel, naics)
 
-# three-panel table writer
+# --- Coverage Table for the appendix (LaTeX) ---
 emit_three_panel <- function(df, file, caption, label, panel_titles, notes) {
   con <- file(file, "w")
   on.exit(close(con))
@@ -127,29 +88,29 @@ emit_three_panel <- function(df, file, caption, label, panel_titles, notes) {
 }
 
 panel_titles <- list(
-  A = "Panel A: Long-Run Historical Timeline (Continuous data from 1993:07--2026)",
-  B = "Panel B: Mid-Range Historical Timeline (Staggered Entry,data from 1996--1999)",
-  C = "Panel C: Comprehensive Modern Timeline (Post-2003 Overhaul Rollout)"
+  A = "Panel A: Long-run historical timeline (continuous data, 1993:07--2026)",
+  B = "Panel B: Mid-range timeline (staggered entry, data begin 1996--1999)",
+  C = "Panel C: Modern timeline (post-2003 NAICS-basis overhaul)"
 )
 
 notes <- paste(
-  "All series are BLS PPI net-output industry indexes",
-  "Base Month is the index reference period; Start is the first month of available data",
-  "Panels reflect data availability rather separate datasets:",
-  "Panel C, estimated over 2004:01-2006 (the first full year after the December 2003 NAICS-basis overhaul)",
-  "Panel A is estimated over 1993:07--2026, set by the start date of $^{a}$Warehousing and Storage (493)",
+  "All series are BLS PPI net-output industry indexes.",
+  "Base Month is the index reference period; Start is the first month of available data.",
+  "Panels reflect data availability, not separate datasets.",
+  "The estimation sample is the common window across all subsectors, 2004:01--2026,",
+  "the first full year after the December 2003 NAICS-basis overhaul.",
+  "$^{a}$Warehousing and storage (493) is available monthly from 1993:07.",
   "$^{b}$Trade-margin, finance/information and weak-oil-linkage service subsectors",
-  "measure margins or services rather than physical net output; they are excluded from baseline, used only in robustness checks.",
-  "$^{c}$Rail transportation (482) is available from 1996 and enters rail-augmented core robustness check from that year."
+  "measure margins or services rather than physical net output.",
+  "$^{c}$Rail transportation (482) is available from 1996."
 )
 
-emit_three_panel(
-  roster, "ppi_coverage.tex",
-  "PPI Net-Output Industry Series by Analytical Sample",
+emit_three_panel(roster, "ppi_coverage.tex",
+  "PPI Net-Output Industry Series by Data Availability",
   "tab:coverage", panel_titles, notes
 )
 
-# Download of the rest of the other files
+# --- Download data files for roster series
 base_url <- "https://download.bls.gov/pub/time.series/pc/"
 files <- c("pc.data.1.OilAndGas","pc.data.4.Food","pc.data.13.PetroleumCoalProducts",
            "pc.data.14.Chemicals","pc.data.15.PlasticsRubberProducts","pc.data.16.NonmetallicMineral",
@@ -173,8 +134,14 @@ for (f in files) {
   }
 }
 
-# Reading every pc.data. downloaded
+# =======================================================
+# Reading values and building the long table
+# Excluding two overlapping files
+# pc.data.0.Current & pc.data.01.aggregates
+# =======================================================
 data_files <- list.files(pattern = "^pc\\.data\\.[0-9]+\\.")
+data_files <- data_files[!data_files %in%
+                           c("pc.data.0.Current", "pc.data.01.aggregates")]
 
 raw <- bind_rows(lapply(data_files, function(f)               # read each, stack rows
   read_tsv(f, trim_ws = TRUE, show_col_types = FALSE,
@@ -191,97 +158,50 @@ long <- raw %>%
     value = suppressWarnings(as.numeric(value))              # index to numeric
   ) %>%
   filter(!is.na(value)) %>%                                   # drop any non-numeric
+  distinct(series_id, date, .keep_all = TRUE) %>%             # safety dedupe
   left_join(select(roster, series_id, naics, panel, excl),    # attach labels
             by = "series_id") %>%
   arrange(series_id, date)
 
-# Report to check if code run smoothly
-found <- long %>%
-  group_by(naics, panel) %>%
-  summarise(first = min(date), last = max(date), n = n(), .groups = "drop") %>%
-  arrange(panel, naics)
-print(found, n = Inf)
+# --- coverage / integrity checks (read these) ------------------------
+dup_check <- long %>% count(series_id, date) %>% filter(n > 1) %>% nrow()
+cat("Duplicate series-month rows (want 0):", dup_check, "\n")
 
-missing <- roster %>%
-  filter(!series_id %in% long$series_id) %>%
+missing <- roster %>% filter(!series_id %in% long$series_id) %>%
   select(naics, industry_name, panel)
-cat("\n--- MISSING (download these files if any appear) ---\n")
-print(missing, n = Inf)
+cat("--- MISSING (should be empty) ---\n"); print(missing, n = Inf)
 
-# Long table to wide
+# Building single analysis panel (2004:01 - 2026, all 46)
 # Each column becomes one industry by NAICS each row one month
 to_wide <- function(df) df %>%
   select(date, naics, value) %>%
   pivot_wider(names_from = naics, values_from = value) %>%
   arrange(date)
 
-# Panel A (core): the 13 Panel-A series, window starting 1993:07
-core_ids <- roster %>% filter(panel == "A") %>% pull(series_id)
-panelA <- long %>%
-  filter(series_id %in% core_ids, date >= as.Date("1993-07-01")) %>%
+# Drop three series that cannot support a balanced 2004:01 panel:
+#  423 wholesalers durable    -> data start 2004:06
+#  423 wholesalers nondurable -> data start 2005:06
+#  493 warehousing            -> 2004:01 - 2006:11 SUSPENDED (data gap)
+drop_naics <- c("423", "424", "493")
+
+analysis_panel <- long %>%
+  filter(date >= as.Date("2004-01-01"),
+         !naics %in% drop_naics) %>%
   to_wide()
 
-broad <- long %>%
-  filter(date >= as.Date("2004-01-01")) %>%
-  to_wide()
+# --- final checks: balance (all NA counts must be 0), dimensions ------
+cat("\nanalysis_panel:", nrow(analysis_panel), "x", ncol(analysis_panel)-1, "\n")
+cat("NA counts (want all 0):\n"); print(colSums(is.na(analysis_panel)))
 
-dim(panelA); dim(broad)         # rows = months, cols = 1 date + industries
-cat("\nPanel A NA counts (want all 0):\n"); print(colSums(is.na(panelA)))
-cat("\nBroad NA counts (want all 0):\n");   print(colSums(is.na(broad)))
+# =====================================================================
+# Saving Files
+# =====================================================================
+saveRDS(analysis_panel, "analysis_panel_levels.rds")  # MAIN sample
+saveRDS(panelA,         "panelA_core_levels.rds")     # robustness (1993)
+saveRDS(long,           "ppi_long.rds")               # tidy long form
+saveRDS(roster,         "roster.rds")                 # series metadata
 
-saveRDS(panelA, "panelA_core_levels.rds")   # 1993:07-2026, 13 industries
-saveRDS(broad,  "broad_levels.rds")          # 2004:01-2026, 46 industries
-saveRDS(long,   "ppi_long.rds")              # tidy long form, for robustness pulls
+message("Done. analysis_panel: ", nrow(analysis_panel), " x ",
+        ncol(analysis_panel)-1, " industries, 2004:01 onward.")
 
-core_ids <- roster %>% filter(panel == "A") %>% pull(series_id)
 
-panelA <- long %>%
-  filter(series_id %in% core_ids, date >= as.Date("1993-07-01")) %>%
-  mutate(value = as.numeric(value)) %>%          # force numeric
-  group_by(date, naics) %>%
-  summarise(value = mean(value), .groups = "drop") %>%  # collapse any dupes
-  pivot_wider(names_from = naics, values_from = value) %>%
-  arrange(date)
-
-str(panelA)   # industry columns should now say "num", not "List"
-
-panelA_long <- panelA %>%
-  pivot_longer(-date, names_to = "naics", values_to = "index")
-
-class(panelA_long$index)   # should now be "numeric"
-
-long %>% filter(series_id %in% core_ids) %>%
-  count(date, naics) %>% filter(n > 1) %>% head(20)
-
-# Error fixing (data duplication)
-data_files <- list.files(pattern = "^pc\\.data\\.[0-9]+\\.")
-data_files <- data_files[!data_files %in%
-                           c("pc.data.0.Current", "pc.data.01.aggregates")]   # drop overlapping/aggregate files
-print(data_files)
-
-long <- raw %>%
-  filter(series_id %in% roster$series_id, period != "M13") %>%
-  mutate(month = as.integer(str_sub(period, 2, 3)),
-         date  = make_date(as.integer(year), month, 1),
-         value = suppressWarnings(as.numeric(value))) %>%
-  filter(!is.na(value)) %>%
-  distinct(series_id, date, .keep_all = TRUE) %>%      # <- remove duplicate rows
-  left_join(select(roster, series_id, naics, panel, excl), by = "series_id") %>%
-  arrange(series_id, date)
-
-long %>% filter(series_id %in% core_ids) %>%
-  count(date, naics) %>% filter(n > 1) %>% nrow()    # want 0
-
-compare <- c("324","325","326","331","622")
-panelA_idx <- panelA_long %>%
-  filter(naics %in% compare) %>%
-  group_by(naics) %>%
-  arrange(date) %>%
-  mutate(rebased = 100 * index / dplyr::first(index)) %>%   # <- namespaced
-  ungroup()
-
-ggplot(panelA_idx, aes(date, rebased, colour = naics)) +
-  geom_line() +
-  labs(title = "Oil-relevant industries, rebased to 100 at 1993:07",
-       x = NULL, y = "Index (1993:07 = 100)", colour = "NAICS") +
-  theme_minimal()
