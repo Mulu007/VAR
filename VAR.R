@@ -6,7 +6,7 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 
-# Downloading the BLS pc.series file
+# --- Downloading the BLS pc.series file ---
 download.file(
   "https://download.bls.gov/pub/time.series/pc/pc.series",
   destfile = "pc.series",
@@ -134,11 +134,9 @@ for (f in files) {
   }
 }
 
-# =======================================================
-# Reading values and building the long table
+# --- Reading values and building the long table ---
 # Excluding two overlapping files
 # pc.data.0.Current & pc.data.01.aggregates
-# =======================================================
 data_files <- list.files(pattern = "^pc\\.data\\.[0-9]+\\.")
 data_files <- data_files[!data_files %in%
                            c("pc.data.0.Current", "pc.data.01.aggregates")]
@@ -178,7 +176,7 @@ to_wide <- function(df) df %>%
   pivot_wider(names_from = naics, values_from = value) %>%
   arrange(date)
 
-# Drop three series that cannot support a balanced 2004:01 panel:
+#  Drop three series that cannot support a balanced 2004:01 panel:
 #  423 wholesalers durable    -> data start 2004:06
 #  423 wholesalers nondurable -> data start 2005:06
 #  493 warehousing            -> 2004:01 - 2006:11 SUSPENDED (data gap)
@@ -189,13 +187,11 @@ analysis_panel <- long %>%
          !naics %in% drop_naics) %>%
   to_wide()
 
-# --- final checks: balance (all NA counts must be 0), dimensions ------
+# --- final checks: balance (all NA counts must be 0), dimensions ---
 cat("\nanalysis_panel:", nrow(analysis_panel), "x", ncol(analysis_panel)-1, "\n")
 cat("NA counts (want all 0):\n"); print(colSums(is.na(analysis_panel)))
 
-# =====================================================================
-# Saving Files
-# =====================================================================
+# --- Saving Files ---
 saveRDS(analysis_panel, "analysis_panel_levels.rds")  # MAIN sample
 saveRDS(panelA,         "panelA_core_levels.rds")     # robustness (1993)
 saveRDS(long,           "ppi_long.rds")               # tidy long form
@@ -204,4 +200,159 @@ saveRDS(roster,         "roster.rds")                 # series metadata
 message("Done. analysis_panel: ", nrow(analysis_panel), " x ",
         ncol(analysis_panel)-1, " industries, 2004:01 onward.")
 
+# ----------------------------------------------------------------------------------------------------------------
+# DATA TRANSFORMATION SECTION
+# Raw PPI levels -> log transformation -> X-13 seasonal adjustment -> unit root & stationarity testing -> first-difference
+# ----------------------------------------------------------------------------------------------------------------
+library(seasonal) # X-13ARIMA-SEATS 
+checkX13()        # check if seasonal works
+library(tseries)  # adf.test, kpss.test
+library(urca)     # Zivot-Andrews break test
+library(seasonalview)
+
+panel <- readRDS("analysis_panel_levels.rds")
+dates <- panel$date
+mat <- as.matrix(panel[,-1]) # removal of the date column in the panel data
+print(mat)
+ind <- colnames(mat)         # the 43 NAICS codes
+
+# --- Log transformation -> Variance stabilisation ---
+logmat <- log(mat) # applies ln to every cell in the matrix
+
+# --- X-13 Seasonal Adjustment Loop ---
+sy <- year(dates[1])  # sy for start year
+sm <- month(dates[1]) # sm for start month
+
+sa_cols <- lapply(seq_along(ind), function(j) {
+  x <- ts(logmat[, j], start = c(sy, sm), frequency = 12)
+  as.numeric(tryCatch(final(seas(x)), error = function(e) x))
+})
+logSA <- do.call(cbind, sa_cols)
+colnames(logSA) <- ind
+
+# --- Fallback Diagnostic ---
+failed <- ind[vapply(seq_along(ind), function(j) {
+  x <- ts(logmat[, j], start = c(sy, sm), frequency = 12)
+  inherits(tryCatch(seas(x), error = function(e) e), "error")
+}, logical(1))]
+cat("X-13 fell back to raw log for:",
+    if (length(failed)) paste(failed, collapse = ", ") else "none", "\n")
+
+# IMPORTANT: check.names = FALSE keeps numeric column names as "327",
+# not "X327". (This was the earlier bug that broke the break test.)
+analysis_panel_logSA <- data.frame(date = dates, logSA, check.names = FALSE)
+saveRDS(analysis_panel_logSA, "analysis_panel_logSA.rds")
+
+#    STATIONARITY TESTS on the log-SA levels.
+#    ADF  : H0 = unit root (non-stationary).  small p  -> stationary
+#    KPSS : H0 = stationary.                  small p  -> non-stationary
+safe_adf  <- function(x) tryCatch(adf.test(x)$p.value,  error = function(e) NA)
+safe_kpss <- function(x) tryCatch(kpss.test(x)$p.value, error = function(e) NA)
+
+results <- lapply(ind, function(j) {
+  lev <- logSA[, j]; dif <- diff(lev)
+  data.frame(naics = j,
+             adf_level = safe_adf(lev),  kpss_level = safe_kpss(lev),
+             adf_diff  = safe_adf(dif),  kpss_diff  = safe_kpss(dif))
+}) %>% bind_rows() %>%
+  # require BOTH tests to agree before declaring a verdict
+  mutate(verdict = case_when(
+    adf_level <= 0.05 & kpss_level >  0.05 ~ "I(0) stationary in levels",
+    adf_diff  <= 0.05 & kpss_diff  >  0.05 ~ "I(1) difference it",
+    TRUE                                   ~ "ambiguous -> break test"
+  ))
+
+# --- Zivot Andrews break test for the "ambiguous" series ---
+# the series flagged ambiguous by ADF/KPSS
+ambiguous <- results %>% filter(verdict == "ambiguous -> break test") %>% pull(naics)
+
+# dates for the DIFFERENCED series (one shorter than the level: drop first date)
+dseq <- analysis_panel_logSA$date[-1]
+
+za <- lapply(ambiguous, function(n) {
+  x <- diff(analysis_panel_logSA[[n]])          # test the first difference
+  tryCatch({
+    t     <- ur.za(x, model = "both", lag = 4)  # allow 1 break in intercept & trend
+    stat  <- as.numeric(t@teststat)
+    crit5 <- as.numeric(t@cval[2])              # cval = c(1%, 5%, 10%); take 5%
+    data.frame(naics      = n,
+               za_stat    = round(stat, 2),
+               za_crit5   = crit5,
+               za_reject  = stat < crit5,        # TRUE => stationary under a break
+               break_date = dseq[t@bpoint])      # estimated break date
+  }, error = function(e)
+    data.frame(naics = n, za_stat = NA, za_crit5 = NA,
+               za_reject = NA, break_date = as.Date(NA)))
+}) %>% bind_rows()
+
+print(za)
+
+# --- Results consolidation
+results <- results %>%
+  select(-any_of(c("za_stat","za_crit5","za_reject","break_date"))) %>%
+  left_join(za, by = "naics")
+
+# view safely (tibble printing avoids the na.print error)
+as_tibble(results) %>% print(n = Inf)
+write.csv(results, "stationarity_results.csv", row.names = FALSE)
+
+cat("\nVerdict counts:\n");            print(table(results$verdict))
+cat("\nZivot-Andrews rejections (TRUE = stationary under a break):\n")
+print(table(results$za_reject, useNA = "ifany"))
+
+# --- Building stationary panel ---
+ind <- setdiff(names(analysis_panel_logSA), "date")
+stationary_panel <- analysis_panel_logSA %>%
+  arrange(date) %>%
+  mutate(across(all_of(ind), ~ c(NA, diff(.)))) %>%
+  slice(-1)
+cat("stationary_panel:", nrow(stationary_panel), "x",
+    ncol(stationary_panel)-1, "| NAs:", sum(is.na(stationary_panel)), "\n")
+saveRDS(stationary_panel, "stationary_panel.rds")
+
+# =====================================================================
+# 03_tables_figures.R
+# Generate LaTeX tables + figures for the data section / progress doc.
+#
+# Inputs : results (stationarity_results.csv), analysis_panel_levels.rds,
+#          analysis_panel_logSA.rds, stationary_panel.rds, roster.rds
+# Outputs: tab_stationarity.tex, and figures/*.pdf
+# =====================================================================
+library(dplyr); library(tidyr); library(ggplot2); library(lubridate); library(stringr)
+
+dir.create("figures", showWarnings = FALSE)
+
+results   <- read.csv("stationarity_results.csv")
+levels_p  <- readRDS("analysis_panel_levels.rds")
+logSA_p   <- readRDS("analysis_panel_logSA.rds")
+stat_p    <- readRDS("stationary_panel.rds")
+roster    <- readRDS("roster.rds")
+
+# make sure numeric column names are clean (not X327) everywhere
+fix_names <- function(df){ names(df) <- sub("^X","",names(df)); df }
+logSA_p <- fix_names(logSA_p); stat_p <- fix_names(stat_p); levels_p <- fix_names(levels_p)
+
+# ----------------------------------------------------------
+# VISUALISATION
+# ----------------------------------------------------------
+stat_p <- readRDS("stationary_panel.rds")
+names(stat_p) <- sub("^X", "", names(stat_p))
+
+stat_long <- stat_p %>%
+  pivot_longer(-date, names_to = "naics", values_to = "dlog")
+
+p_all <- ggplot(stat_long, aes(date, dlog)) +
+  # Shock Period Shading
+  annotate("rect", xmin = as.Date("2020-03-01"), xmax = as.Date("2022-06-01"),
+           ymin = -Inf, ymax = Inf, alpha = 0.12, fill = "steelblue") +
+  annotate("rect", xmin = as.Date("2026-02-01"), xmax = max(stat_long$date),
+           ymin = -Inf, ymax = Inf, alpha = 0.12, fill = "firebrick") +
+  geom_line(linewidth = 0.25) +
+  facet_wrap(~ naics, scales = "free_y", ncol = 6) +
+  labs(title = "First differences (monthly inflation), all 43 industries",
+       subtitle = "Blue: COVID (2020:03-2022:06)   Red: 2026 Iran war (2026:02-)",
+       x = NULL, y = expression(Delta~log~price)) +
+  theme_minimal(base_size = 8)
+
+p_all
 
