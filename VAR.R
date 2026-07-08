@@ -11,7 +11,7 @@ download.file(
   "https://download.bls.gov/pub/time.series/pc/pc.series",
   destfile = "pc.series",
   mode = "wb",
-  headers = c("User-Agent" = "your_email@example.com")
+  headers = c("User-Agent" = "uvb20@example.com")
 )
 
 # --- Reading in the reference tables ---
@@ -216,18 +216,19 @@ mat <- as.matrix(panel[,-1]) # removal of the date column in the panel data
 print(mat)
 ind <- colnames(mat)         # the 43 NAICS codes
 
-# --- Log transformation -> Variance stabilisation ---
+# --- Log transformation -> Variance stabilisation (heteroskedasticity correction) ---
 logmat <- log(mat) # applies ln to every cell in the matrix
 
 # --- X-13 Seasonal Adjustment Loop ---
 sy <- year(dates[1])  # sy for start year
 sm <- month(dates[1]) # sm for start month
 
-sa_cols <- lapply(seq_along(ind), function(j) {
-  x <- ts(logmat[, j], start = c(sy, sm), frequency = 12)
-  as.numeric(tryCatch(final(seas(x)), error = function(e) x))
+
+sa_cols <- lapply(seq_along(ind), function(j) {               # iterates over every j from 1 to 43 applying the same function to each
+  x <- ts(logmat[, j], start = c(sy, sm), frequency = 12)     # pulls out j out of the log matrix and tells R its a monthly ts starting from (sy,sm)
+  as.numeric(tryCatch(final(seas(x)), error = function(e) x)) # strips out the seasonal component and what remains is the trend-cycle component
 })
-logSA <- do.call(cbind, sa_cols)
+logSA <- do.call(cbind, sa_cols) 
 colnames(logSA) <- ind
 
 # --- Fallback Diagnostic ---
@@ -250,7 +251,7 @@ safe_adf  <- function(x) tryCatch(adf.test(x)$p.value,  error = function(e) NA)
 safe_kpss <- function(x) tryCatch(kpss.test(x)$p.value, error = function(e) NA)
 
 results <- lapply(ind, function(j) {
-  lev <- logSA[, j]; dif <- diff(lev)
+  lev <- logSA[, j]; dif <- diff(lev) # first difference
   data.frame(naics = j,
              adf_level = safe_adf(lev),  kpss_level = safe_kpss(lev),
              adf_diff  = safe_adf(dif),  kpss_diff  = safe_kpss(dif))
@@ -355,4 +356,86 @@ p_all <- ggplot(stat_long, aes(date, dlog)) +
   theme_minimal(base_size = 8)
 
 p_all
+
+# -----------------
+# GENERATION OF WORKING DRAFT (data section)
+# ----------------------
+dir.create("figures", showWarnings = FALSE)
+
+results <- read.csv("stationarity_results.csv")
+stat_p  <- readRDS("stationary_panel.rds")
+roster  <- readRDS("roster.rds")
+names(stat_p) <- sub("^X","",names(stat_p))
+
+# =====================================================================
+# TABLE: Zivot-Andrews results for the 15 ambiguous series
+# =====================================================================
+za_tab <- results %>%
+  filter(!is.na(za_stat)) %>%
+  transmute(NAICS = naics, adf = round(adf_diff,3), kpss = round(kpss_diff,3),
+            za = za_stat, brk = substr(break_date,1,7),
+            rej = ifelse(za_reject,"Yes","No")) %>%
+  arrange(brk)
+
+con <- file("tab_stationarity.tex","w")
+cat("% requires \\usepackage{booktabs}\n{\\footnotesize\n", file=con)
+cat("\\begin{tabular}{lccccc}\n\\toprule\n", file=con)
+cat("NAICS & ADF (diff) & KPSS (diff) & ZA stat & Break & Reject $H_0$ \\\\\n\\midrule\n", file=con)
+for(i in seq_len(nrow(za_tab)))
+  cat(sprintf("%s & %.3f & %.3f & %.2f & %s & %s \\\\\n",
+              za_tab$NAICS[i],za_tab$adf[i],za_tab$kpss[i],za_tab$za[i],za_tab$brk[i],za_tab$rej[i]),file=con)
+cat("\\bottomrule\n\\end{tabular}\n}\n", file=con)
+close(con)
+cat("wrote tab_stationarity.tex\n")
+
+# =====================================================================
+# FIGURES: all 43 industries, 5 per figure, in the stacked-strip style
+# =====================================================================
+# short readable names for facet titles: "324  Petroleum and coal products mfg"
+name_map <- roster %>% distinct(naics, industry_name) %>%
+  mutate(label = paste0(naics, "  ", industry_name))
+
+stat_long <- stat_p %>%
+  pivot_longer(-date, names_to="naics", values_to="dlog") %>%
+  left_join(name_map, by = "naics")
+
+all_naics <- sort(unique(stat_long$naics))          # 43 codes
+groups    <- split(all_naics, ceiling(seq_along(all_naics)/5))   # 9 groups of <=5
+
+for (g in seq_along(groups)) {
+  sub <- stat_long %>%
+    filter(naics %in% groups[[g]]) %>%
+    mutate(label = factor(label, levels = unique(label[order(naics)])))
+  
+  p <- ggplot(sub, aes(date, dlog)) +
+    geom_line(linewidth = 0.3, colour = "grey15") +
+    facet_wrap(~ label, ncol = 1, scales = "free_y") +
+    scale_x_date(date_breaks = "5 years", date_labels = "%Y") +
+    labs(title = sprintf("First differences (monthly inflation) — industries %d–%d of 43",
+                         (g-1)*5 + 1, (g-1)*5 + length(groups[[g]])),
+         x = NULL, y = expression(Delta~log~price)) +
+    theme_minimal(base_size = 10) +
+    theme(strip.text = element_text(size = 8.5),
+          plot.title = element_text(size = 11))
+  
+  fn <- sprintf("figures/fig_series_%d.pdf", g)
+  ggsave(fn, p, width = 7, height = 1.55 * length(groups[[g]]) + 0.7,
+         device = cairo_pdf)
+  cat("wrote", fn, "\n")
+}
+
+# =====================================================================
+# FIGURE: Zivot-Andrews break-year histogram
+# =====================================================================
+byr <- results %>% filter(!is.na(break_date)) %>%
+  mutate(year = as.integer(substr(break_date,1,4)))
+p_break <- ggplot(byr, aes(x = factor(year))) +
+  geom_bar(fill = "grey30") +
+  labs(title = "Estimated structural-break years (Zivot-Andrews)",
+       x = NULL, y = "Number of industries") +
+  theme_minimal(base_size = 11)
+ggsave("figures/fig_breaks.pdf", p_break, width = 7, height = 3.5, device = cairo_pdf)
+cat("wrote figures/fig_breaks.pdf\n")
+
+cat("\nFiles in figures/:\n"); print(list.files("figures"))
 
