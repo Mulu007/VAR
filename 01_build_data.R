@@ -211,7 +211,6 @@ cat("NA counts (want all 0):\n"); print(colSums(is.na(analysis_panel)))
 
 # --- Saving Files ---
 saveRDS(analysis_panel, "data/processed/analysis_panel_levels.rds")  # MAIN sample
-saveRDS(panelA,         "data/processed/panelA_core_levels.rds")     # robustness (1993)
 saveRDS(long,           "data/processed/ppi_long.rds")               # tidy long form
 saveRDS(roster,         "data/processed/roster.rds")                 # series metadata
 
