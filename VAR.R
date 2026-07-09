@@ -6,20 +6,28 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 
+# --- Project folder structure ---
+# data/raw/       BLS source files (pc.series, pc.industry, pc.product, pc.data.*)
+# data/processed/ built panels and results (.rds, .csv)
+# tables/         LaTeX table output (.tex)
+# figures/        figure output (.pdf)
+for (d in c("data/raw", "data/processed", "tables", "figures"))
+  dir.create(d, recursive = TRUE, showWarnings = FALSE)
+
 # --- Downloading the BLS pc.series file ---
 download.file(
   "https://download.bls.gov/pub/time.series/pc/pc.series",
-  destfile = "pc.series",
+  destfile = "data/raw/pc.series",
   mode = "wb",
   headers = c("User-Agent" = "uvb20@example.com")
 )
 
 # --- Reading in the reference tables ---
-series   <- read_tsv("pc.series",   trim_ws = TRUE, show_col_types = FALSE) %>%
+series   <- read_tsv("data/raw/pc.series",   trim_ws = TRUE, show_col_types = FALSE) %>%
   mutate(across(where(is.character), str_trim))
-industry <- read_tsv("pc.industry", trim_ws = TRUE, show_col_types = FALSE) %>%
+industry <- read_tsv("data/raw/pc.industry", trim_ws = TRUE, show_col_types = FALSE) %>%
   mutate(across(where(is.character), str_trim))
-product  <- read_tsv("pc.product",  trim_ws = TRUE, show_col_types = FALSE) %>%
+product  <- read_tsv("data/raw/pc.product",  trim_ws = TRUE, show_col_types = FALSE) %>%
   mutate(across(where(is.character), str_trim))
 
 # --- Isolating 3-digit net-output totals (industry code == product code) ---
@@ -105,7 +113,7 @@ notes <- paste(
   "$^{c}$Rail transportation (482) is available from 1996."
 )
 
-emit_three_panel(roster, "ppi_coverage.tex",
+emit_three_panel(roster, "tables/ppi_coverage.tex",
   "PPI Net-Output Industry Series by Data Availability",
   "tab:coverage", panel_titles, notes
 )
@@ -128,8 +136,9 @@ files <- c("pc.data.1.OilAndGas","pc.data.4.Food","pc.data.13.PetroleumCoalProdu
            "pc.data.57.Finance","pc.data.58.InsuranceCarriers","pc.data.71.Accommodation")
 
 for (f in files) {
-  if (!file.exists(f)) {
-    download.file(paste0(base_url, f), destfile = f, mode = "wb",
+  dest <- file.path("data/raw", f)
+  if (!file.exists(dest)) {
+    download.file(paste0(base_url, f), destfile = dest, mode = "wb",
                   headers = c("User-Agent" = "uvb20@txst.edu"))
   }
 }
@@ -137,8 +146,9 @@ for (f in files) {
 # --- Reading values and building the long table ---
 # Excluding two overlapping files
 # pc.data.0.Current & pc.data.01.aggregates
-data_files <- list.files(pattern = "^pc\\.data\\.[0-9]+\\.")
-data_files <- data_files[!data_files %in%
+data_files <- list.files("data/raw", pattern = "^pc\\.data\\.[0-9]+\\.",
+                         full.names = TRUE)
+data_files <- data_files[!basename(data_files) %in%
                            c("pc.data.0.Current", "pc.data.01.aggregates")]
 
 raw <- bind_rows(lapply(data_files, function(f)               # read each, stack rows
@@ -192,10 +202,10 @@ cat("\nanalysis_panel:", nrow(analysis_panel), "x", ncol(analysis_panel)-1, "\n"
 cat("NA counts (want all 0):\n"); print(colSums(is.na(analysis_panel)))
 
 # --- Saving Files ---
-saveRDS(analysis_panel, "analysis_panel_levels.rds")  # MAIN sample
-saveRDS(panelA,         "panelA_core_levels.rds")     # robustness (1993)
-saveRDS(long,           "ppi_long.rds")               # tidy long form
-saveRDS(roster,         "roster.rds")                 # series metadata
+saveRDS(analysis_panel, "data/processed/analysis_panel_levels.rds")  # MAIN sample
+saveRDS(panelA,         "data/processed/panelA_core_levels.rds")     # robustness (1993)
+saveRDS(long,           "data/processed/ppi_long.rds")               # tidy long form
+saveRDS(roster,         "data/processed/roster.rds")                 # series metadata
 
 message("Done. analysis_panel: ", nrow(analysis_panel), " x ",
         ncol(analysis_panel)-1, " industries, 2004:01 onward.")
@@ -210,7 +220,7 @@ library(tseries)  # adf.test, kpss.test
 library(urca)     # Zivot-Andrews break test
 library(seasonalview)
 
-panel <- readRDS("analysis_panel_levels.rds")
+panel <- readRDS("data/processed/analysis_panel_levels.rds")
 dates <- panel$date
 mat <- as.matrix(panel[,-1]) # removal of the date column in the panel data
 print(mat)
@@ -242,7 +252,7 @@ cat("X-13 fell back to raw log for:",
 # IMPORTANT: check.names = FALSE keeps numeric column names as "327",
 # not "X327". (This was the earlier bug that broke the break test.)
 analysis_panel_logSA <- data.frame(date = dates, logSA, check.names = FALSE)
-saveRDS(analysis_panel_logSA, "analysis_panel_logSA.rds")
+saveRDS(analysis_panel_logSA, "data/processed/analysis_panel_logSA.rds")
 
 #    STATIONARITY TESTS on the log-SA levels.
 #    ADF  : H0 = unit root (non-stationary).  small p  -> stationary
@@ -295,7 +305,7 @@ results <- results %>%
 
 # view safely (tibble printing avoids the na.print error)
 as_tibble(results) %>% print(n = Inf)
-write.csv(results, "stationarity_results.csv", row.names = FALSE)
+write.csv(results, "data/processed/stationarity_results.csv", row.names = FALSE)
 
 cat("\nVerdict counts:\n");            print(table(results$verdict))
 cat("\nZivot-Andrews rejections (TRUE = stationary under a break):\n")
@@ -309,7 +319,7 @@ stationary_panel <- analysis_panel_logSA %>%
   slice(-1)
 cat("stationary_panel:", nrow(stationary_panel), "x",
     ncol(stationary_panel)-1, "| NAs:", sum(is.na(stationary_panel)), "\n")
-saveRDS(stationary_panel, "stationary_panel.rds")
+saveRDS(stationary_panel, "data/processed/stationary_panel.rds")
 
 # =====================================================================
 # 03_tables_figures.R
@@ -323,11 +333,11 @@ library(dplyr); library(tidyr); library(ggplot2); library(lubridate); library(st
 
 dir.create("figures", showWarnings = FALSE)
 
-results   <- read.csv("stationarity_results.csv")
-levels_p  <- readRDS("analysis_panel_levels.rds")
-logSA_p   <- readRDS("analysis_panel_logSA.rds")
-stat_p    <- readRDS("stationary_panel.rds")
-roster    <- readRDS("roster.rds")
+results   <- read.csv("data/processed/stationarity_results.csv")
+levels_p  <- readRDS("data/processed/analysis_panel_levels.rds")
+logSA_p   <- readRDS("data/processed/analysis_panel_logSA.rds")
+stat_p    <- readRDS("data/processed/stationary_panel.rds")
+roster    <- readRDS("data/processed/roster.rds")
 
 # make sure numeric column names are clean (not X327) everywhere
 fix_names <- function(df){ names(df) <- sub("^X","",names(df)); df }
@@ -336,7 +346,7 @@ logSA_p <- fix_names(logSA_p); stat_p <- fix_names(stat_p); levels_p <- fix_name
 # ----------------------------------------------------------
 # VISUALISATION
 # ----------------------------------------------------------
-stat_p <- readRDS("stationary_panel.rds")
+stat_p <- readRDS("data/processed/stationary_panel.rds")
 names(stat_p) <- sub("^X", "", names(stat_p))
 
 stat_long <- stat_p %>%
@@ -362,9 +372,9 @@ p_all
 # ----------------------
 dir.create("figures", showWarnings = FALSE)
 
-results <- read.csv("stationarity_results.csv")
-stat_p  <- readRDS("stationary_panel.rds")
-roster  <- readRDS("roster.rds")
+results <- read.csv("data/processed/stationarity_results.csv")
+stat_p  <- readRDS("data/processed/stationary_panel.rds")
+roster  <- readRDS("data/processed/roster.rds")
 names(stat_p) <- sub("^X","",names(stat_p))
 
 # =====================================================================
@@ -377,7 +387,7 @@ za_tab <- results %>%
             rej = ifelse(za_reject,"Yes","No")) %>%
   arrange(brk)
 
-con <- file("tab_stationarity.tex","w")
+con <- file("tables/tab_stationarity.tex","w")
 cat("% requires \\usepackage{booktabs}\n{\\footnotesize\n", file=con)
 cat("\\begin{tabular}{lccccc}\n\\toprule\n", file=con)
 cat("NAICS & ADF (diff) & KPSS (diff) & ZA stat & Break & Reject $H_0$ \\\\\n\\midrule\n", file=con)
@@ -386,7 +396,7 @@ for(i in seq_len(nrow(za_tab)))
               za_tab$NAICS[i],za_tab$adf[i],za_tab$kpss[i],za_tab$za[i],za_tab$brk[i],za_tab$rej[i]),file=con)
 cat("\\bottomrule\n\\end{tabular}\n}\n", file=con)
 close(con)
-cat("wrote tab_stationarity.tex\n")
+cat("wrote tables/tab_stationarity.tex\n")
 
 # =====================================================================
 # FIGURES: all 43 industries, 5 per figure, in the stacked-strip style
@@ -427,15 +437,4 @@ for (g in seq_along(groups)) {
 # =====================================================================
 # FIGURE: Zivot-Andrews break-year histogram
 # =====================================================================
-byr <- results %>% filter(!is.na(break_date)) %>%
-  mutate(year = as.integer(substr(break_date,1,4)))
-p_break <- ggplot(byr, aes(x = factor(year))) +
-  geom_bar(fill = "grey30") +
-  labs(title = "Estimated structural-break years (Zivot-Andrews)",
-       x = NULL, y = "Number of industries") +
-  theme_minimal(base_size = 11)
-ggsave("figures/fig_breaks.pdf", p_break, width = 7, height = 3.5, device = cairo_pdf)
-cat("wrote figures/fig_breaks.pdf\n")
-
-cat("\nFiles in figures/:\n"); print(list.files("figures"))
-
+byr <- results
