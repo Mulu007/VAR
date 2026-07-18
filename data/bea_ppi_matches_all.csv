@@ -1,0 +1,342 @@
+"bea_code","bea_title","ast_flag","matched_naics","match_digits","ppi_series","begin_year"
+"211000","Oil and gas extraction",FALSE,"211",3,"PCU211---211---",1985
+"212100","Coal mining",FALSE,"2121",4,"PCU2121--2121--",1985
+"2122A0","Iron, gold, silver, and other metal ore mining",FALSE,"21221",5,"PCU21221-21221-",1984
+"2122A0","Iron, gold, silver, and other metal ore mining",FALSE,"21222",5,"PCU21222-21222-",1984
+"2122A0","Iron, gold, silver, and other metal ore mining",FALSE,"21229",5,"PCU21229-21229-",1985
+"212230","Copper, nickel, lead, and zinc mining",FALSE,"21223",5,"PCU21223-21223-",1988
+"212310","Stone mining and quarrying",FALSE,"2123",4,"PCU2123--2123--",1984
+"2123A0","Other nonmetallic mineral mining and quarrying",FALSE,"21232",5,"PCU21232-21232-",2003
+"2123A0","Other nonmetallic mineral mining and quarrying",FALSE,"21239",5,"PCU21239-21239-",1984
+"213111","Drilling oil and gas wells",FALSE,"213111",6,"PCU213111213111",1985
+"21311A","Other support activities for mining",FALSE,"213112",6,"PCU213112213112",1985
+"21311A","Other support activities for mining",FALSE,"21311",5,"PCU21311-21311-",2003
+"221100","Electric power generation, transmission, and distribution",FALSE,"2211",4,"PCU2211--2211--",2003
+"221200","Natural gas distribution",FALSE,"2212",4,"PCU2212--2212--",2003
+"221300","Water, sewage and other systems",FALSE,"221",3,"PCU221---221---",2003
+"321100","Sawmills and wood preservation",FALSE,"3211",4,"PCU3211--3211--",2003
+"321200","Veneer, plywood, and engineered wood product manufacturing",FALSE,"3212",4,"PCU3212--3212--",2003
+"321910","Millwork",FALSE,"32191",5,"PCU32191-32191-",2003
+"3219A0","All other wood product manufacturing",FALSE,"32192",5,"PCU32192-32192-",2003
+"3219A0","All other wood product manufacturing",FALSE,"3219",4,"PCU3219--3219--",2003
+"3219A0","All other wood product manufacturing",FALSE,"32199",5,"PCU32199-32199-",2003
+"327100","Clay product and refractory manufacturing",FALSE,"3271",4,"PCU3271--3271--",2003
+"327200","Glass and glass product manufacturing",FALSE,"3272",4,"PCU3272--3272--",2003
+"327310","Cement manufacturing",FALSE,"32731",5,"PCU32731-32731-",1965
+"327320","Ready-mix concrete manufacturing",FALSE,"32732",5,"PCU32732-32732-",2003
+"327330","Concrete pipe, brick, and block manufacturing",FALSE,"32733",5,"PCU32733-32733-",2003
+"327390","Other concrete product manufacturing",FALSE,"32739",5,"PCU32739-32739-",2003
+"327400","Lime and gypsum product manufacturing",FALSE,"327",3,"PCU327---327---",1984
+"327910","Abrasive product manufacturing",FALSE,"32791",5,"PCU32791-32791-",2003
+"327991","Cut stone and stone product manufacturing",FALSE,"327991",6,"PCU327991327991",1984
+"327992","Ground or treated mineral and earth manufacturing",FALSE,"327992",6,"PCU327992327992",1985
+"327993","Mineral wool manufacturing",FALSE,"327993",6,"PCU327993327993",1981
+"327999","Miscellaneous nonmetallic mineral products",FALSE,"327999",6,"PCU327999327999",2003
+"331110","Iron and steel mills and ferroalloy manufacturing",FALSE,"3311",4,"PCU3311--3311--",2003
+"331200","Steel product manufacturing from purchased steel",FALSE,"3312",4,"PCU3312--3312--",2003
+"331313","Alumina refining and primary aluminum production",FALSE,"331313",6,"PCU331313331313",1967
+"331314","Secondary smelting and alloying of aluminum",FALSE,"331314",6,"PCU331314331314",2003
+"33131B","Aluminum product manufacturing from purchased aluminum",FALSE,"331315",6,"PCU331315331315",1975
+"33131B","Aluminum product manufacturing from purchased aluminum",FALSE,"331318",6,"PCU331318331318",1975
+"331410","Nonferrous metal (except aluminum) smelting and refining",FALSE,"331410",6,"PCU331410331410",2009
+"331420","Copper rolling, drawing, extruding and alloying",FALSE,"33142",5,"PCU33142-33142-",2003
+"331490","Nonferrous metal (except copper and aluminum) rolling, drawing, extruding and alloying",FALSE,"33149",5,"PCU33149-33149-",2003
+"331510","Ferrous metal foundries",FALSE,"33151",5,"PCU33151-33151-",1984
+"331520","Nonferrous metal foundries",FALSE,"33152",5,"PCU33152-33152-",1984
+"33211A","All other forging, stamping, and sintering",FALSE,"332111",6,"PCU332111332111",1983
+"33211A","All other forging, stamping, and sintering",FALSE,"332112",6,"PCU332112332112",1983
+"33211A","All other forging, stamping, and sintering",FALSE,"33211",5,"PCU33211-33211-",2003
+"332114","Custom roll forming",FALSE,"332114",6,"PCU332114332114",2003
+"332119","Metal crown, closure, and other metal stamping (except automotive)",FALSE,"332119",6,"PCU332119332119",1984
+"332200","Cutlery and handtool manufacturing",FALSE,"332",3,"PCU332---332---",1984
+"332310","Plate work and fabricated structural product manufacturing",FALSE,"33231",5,"PCU33231-33231-",2003
+"332320","Ornamental and architectural metal products manufacturing",FALSE,"33232",5,"PCU33232-33232-",2003
+"332410","Power boiler and heat exchanger manufacturing",FALSE,"33241",5,"PCU33241-33241-",2003
+"332420","Metal tank (heavy gauge) manufacturing",FALSE,"33242",5,"PCU33242-33242-",2003
+"332430","Metal can, box, and other metal container (light gauge) manufacturing",FALSE,"33243",5,"PCU33243-33243-",1984
+"332500","Hardware manufacturing",FALSE,"3325",4,"PCU3325--3325--",2003
+"332600","Spring and wire product manufacturing",FALSE,"3326",4,"PCU3326--3326--",2003
+"332710","Machine shops",FALSE,"33271",5,"PCU33271-33271-",2003
+"332720","Turned product and screw, nut, and bolt manufacturing",FALSE,"33272",5,"PCU33272-33272-",1984
+"332800","Coating, engraving, heat treating and allied activities",FALSE,"3328",4,"PCU3328--3328--",2003
+"33291A","Valve and fittings other than plumbing",FALSE,"332911",6,"PCU332911332911",1991
+"33291A","Valve and fittings other than plumbing",FALSE,"332912",6,"PCU332912332912",1991
+"33291A","Valve and fittings other than plumbing",FALSE,"332919",6,"PCU332919332919",1972
+"332913","Plumbing fixture fitting and trim manufacturing",FALSE,"332913",6,"PCU332913332913",1947
+"332991","Ball and roller bearing manufacturing",FALSE,"332991",6,"PCU332991332991",1947
+"33299A","Ammunition, arms, ordnance, and accessories manufacturing",FALSE,"33299",5,"PCU33299-33299-",2003
+"332996","Fabricated pipe and pipe fitting manufacturing",FALSE,"332996",6,"PCU332996332996",1965
+"332999","Other fabricated metal manufacturing",FALSE,"332999",6,"PCU332999332999",2003
+"333111","Farm machinery and equipment manufacturing",FALSE,"333111",6,"PCU333111333111",1926
+"333112","Lawn and garden equipment manufacturing",FALSE,"333112",6,"PCU333112333112",1982
+"333120","Construction machinery manufacturing",FALSE,"33312",5,"PCU33312-33312-",2003
+"333130","Mining and oil and gas field machinery manufacturing",FALSE,"33313",5,"PCU33313-33313-",2003
+"333242","Semiconductor machinery manufacturing",FALSE,"333242",6,"PCU333242333242",2003
+"33329A","Other industrial machinery manufacturing",FALSE,"333241",6,"PCU333241333241",1983
+"33329A","Other industrial machinery manufacturing",FALSE,"333243",6,"PCU333243333243",2011
+"33329A","Other industrial machinery manufacturing",FALSE,"33324",5,"PCU33324-33324-",1984
+"333314","Optical instrument and lens manufacturing",FALSE,"33331",5,"PCU33331-33331-",2003
+"333316","Photographic and photocopying equipment manufacturing",FALSE,"33331",5,"PCU33331-33331-",2003
+"333318","Other commercial and service industry machinery manufacturing",FALSE,"33331",5,"PCU33331-33331-",2003
+"333413","Industrial and commercial fan and blower and air purification equipment manufacturing",FALSE,"333413",6,"PCU333413333413",2011
+"333414","Heating equipment (except warm air furnaces) manufacturing",FALSE,"333414",6,"PCU333414333414",1980
+"333415","Air conditioning, refrigeration, and warm air heating equipment manufacturing",FALSE,"333415",6,"PCU333415333415",1977
+"333511","Industrial mold manufacturing",FALSE,"333511",6,"PCU333511333511",2003
+"333517","Machine tool manufacturing",FALSE,"333517",6,"PCU333517333517",2011
+"333514","Special tool, die, jig, and fixture manufacturing",FALSE,"333514",6,"PCU333514333514",2003
+"33351B","Cutting and machine tool accessory, rolling mill, and other metalworking machinery manufacturing",FALSE,"333515",6,"PCU333515333515",1983
+"33351B","Cutting and machine tool accessory, rolling mill, and other metalworking machinery manufacturing",FALSE,"333519",6,"PCU333519333519",2011
+"333611","Turbine and turbine generator set units manufacturing",FALSE,"333611",6,"PCU333611333611",1982
+"333612","Speed changer, industrial high-speed drive, and gear manufacturing",FALSE,"333612",6,"PCU333612333612",1947
+"333613","Mechanical power transmission equipment manufacturing",FALSE,"333613",6,"PCU333613333613",1984
+"333618","Other engine equipment manufacturing",FALSE,"333618",6,"PCU333618333618",1967
+"333914","Measuring, dispensing, and other pumping equipment manufacturing",FALSE,"333914",6,"PCU333914333914",1983
+"333912","Air and gas compressor manufacturing",FALSE,"333912",6,"PCU333912333912",1984
+"333920","Material handling equipment manufacturing",FALSE,"33392",5,"PCU33392-33392-",2003
+"333991","Power-driven handtool manufacturing",FALSE,"33399",5,"PCU33399-33399-",2003
+"33399A","Other general purpose machinery manufacturing",FALSE,"333992",6,"PCU333992333992",1972
+"33399A","Other general purpose machinery manufacturing",FALSE,"33399",5,"PCU33399-33399-",2003
+"333993","Packaging machinery manufacturing",FALSE,"333993",6,"PCU333993333993",1988
+"333994","Industrial process furnace and oven manufacturing",FALSE,"333994",6,"PCU333994333994",1981
+"33399B","Fluid power process machinery",FALSE,"333995",6,"PCU333995333995",1990
+"33399B","Fluid power process machinery",FALSE,"333996",6,"PCU333996333996",1990
+"334111","Electronic computer manufacturing",FALSE,"334111",6,"PCU334111334111",1990
+"334112","Computer storage device manufacturing",FALSE,"334112",6,"PCU334112334112",1992
+"334118","Computer terminals and other computer peripheral equipment manufacturing",FALSE,"334118",6,"PCU334118334118",1993
+"334210","Telephone apparatus manufacturing",FALSE,"33421",5,"PCU33421-33421-",2003
+"334220","Broadcast and wireless communications equipment",FALSE,"33422",5,"PCU33422-33422-",2003
+"334290","Other communications equipment manufacturing",FALSE,"3342",4,"PCU3342--3342--",1985
+"334413","Semiconductor and related device manufacturing",FALSE,"334413",6,"PCU334413334413",1967
+"334418","Printed circuit assembly (electronic assembly) manufacturing",FALSE,"334418",6,"PCU334418334418",2003
+"33441A","Other electronic component manufacturing",FALSE,"334412",6,"PCU334412334412",1991
+"33441A","Other electronic component manufacturing",FALSE,"33441",5,"PCU33441-33441-",1984
+"33441A","Other electronic component manufacturing",FALSE,"334417",6,"PCU334417334417",1975
+"33441A","Other electronic component manufacturing",FALSE,"334419",6,"PCU334419334419",2003
+"334510","Electromedical and electrotherapeutic apparatus manufacturing",FALSE,"334510",6,"PCU334510334510",1985
+"334511","Search, detection, and navigation instruments manufacturing",FALSE,"334511",6,"PCU334511334511",1991
+"334512","Automatic environmental control manufacturing",FALSE,"334512",6,"PCU334512334512",1979
+"334513","Industrial process variable instruments manufacturing",FALSE,"334513",6,"PCU334513334513",1983
+"334514","Totalizing fluid meter and counting device manufacturing",FALSE,"334514",6,"PCU334514334514",1985
+"334515","Electricity and signal testing instruments manufacturing",FALSE,"334515",6,"PCU334515334515",1983
+"334516","Analytical laboratory instrument manufacturing",FALSE,"334516",6,"PCU334516334516",1985
+"334517","Irradiation apparatus manufacturing",FALSE,"334517",6,"PCU334517334517",1990
+"33451A","Watch, clock, and other measuring and controlling device manufacturing",FALSE,"334519",6,"PCU334519334519",1985
+"334300","Audio and video equipment manufacturing",FALSE,"3343",4,"PCU3343--3343--",2003
+"334610","Manufacturing and reproducing magnetic and optical media",FALSE,"334",3,"PCU334---334---",2003
+"335110","Electric lamp bulb and part manufacturing",FALSE,"3351",4,"PCU3351--3351--",2003
+"335120","Lighting fixture manufacturing",FALSE,"3351",4,"PCU3351--3351--",2003
+"335210","Small electrical appliance manufacturing",FALSE,"33521",5,"PCU33521-33521-",2003
+"335220","Major household appliance manufacturing",FALSE,"335220",6,"PCU335220335220",2016
+"335311","Power, distribution, and specialty transformer manufacturing",FALSE,"335311",6,"PCU335311335311",1967
+"335312","Motor and generator manufacturing",FALSE,"335312",6,"PCU335312335312",1947
+"335313","Switchgear and switchboard apparatus manufacturing",FALSE,"335313",6,"PCU335313335313",1985
+"335314","Relay and industrial control manufacturing",FALSE,"335314",6,"PCU335314335314",1985
+"335911","Storage battery manufacturing",FALSE,"33591",5,"PCU33591-33591-",2003
+"335912","Primary battery manufacturing",FALSE,"33591",5,"PCU33591-33591-",2003
+"335920","Communication and energy wire and cable manufacturing",FALSE,"33592",5,"PCU33592-33592-",2003
+"335930","Wiring device manufacturing",FALSE,"33593",5,"PCU33593-33593-",2003
+"335991","Carbon and graphite product manufacturing",FALSE,"335991",6,"PCU335991335991",1985
+"335999","All other miscellaneous electrical equipment and component manufacturing",FALSE,"335999",6,"PCU335999335999",2003
+"336111","Automobile manufacturing",FALSE,"33611",5,"PCU33611-33611-",2003
+"336112","Light truck and utility vehicle manufacturing",FALSE,"33611",5,"PCU33611-33611-",2003
+"336120","Heavy duty truck manufacturing",FALSE,"33612",5,"PCU33612-33612-",2003
+"336211","Motor vehicle body manufacturing",FALSE,"336211",6,"PCU336211336211",1982
+"336212","Truck trailer manufacturing",FALSE,"336212",6,"PCU336212336212",1979
+"336213","Motor home manufacturing",FALSE,"336213",6,"PCU336213336213",1984
+"336214","Travel trailer and camper manufacturing",FALSE,"336214",6,"PCU336214336214",2003
+"336310","Motor vehicle gasoline engine and engine parts manufacturing",FALSE,"33631",5,"PCU33631-33631-",2003
+"336320","Motor vehicle electrical and electronic equipment manufacturing",FALSE,"33632",5,"PCU33632-33632-",2003
+"3363A0","Motor vehicle steering, suspension component (except spring), and brake systems manufacturing",FALSE,"33633",5,"PCU33633-33633-",2003
+"3363A0","Motor vehicle steering, suspension component (except spring), and brake systems manufacturing",FALSE,"33634",5,"PCU33634-33634-",2003
+"336350","Motor vehicle transmission and power train parts manufacturing",FALSE,"33635",5,"PCU33635-33635-",2003
+"336360","Motor vehicle seating and interior trim manufacturing",FALSE,"33636",5,"PCU33636-33636-",2003
+"336370","Motor vehicle metal stamping",FALSE,"33637",5,"PCU33637-33637-",2003
+"336390","Other motor vehicle parts manufacturing",FALSE,"33639",5,"PCU33639-33639-",2003
+"336411","Aircraft manufacturing",FALSE,"336411",6,"PCU336411336411",1985
+"336412","Aircraft engine and engine parts manufacturing",FALSE,"336412",6,"PCU336412336412",1985
+"336413","Other aircraft parts and auxiliary equipment manufacturing",FALSE,"336413",6,"PCU336413336413",1985
+"336414","Guided missile and space vehicle manufacturing",FALSE,"33641",5,"PCU33641-33641-",1985
+"33641A","Propulsion units and parts for space vehicles and guided missiles",FALSE,"33641",5,"PCU33641-33641-",1985
+"336500","Railroad rolling stock manufacturing",FALSE,"3365",4,"PCU3365--3365--",1984
+"336611","Ship building and repairing",FALSE,"336611",6,"PCU336611336611",1985
+"336612","Boat building",FALSE,"336612",6,"PCU336612336612",1981
+"336991","Motorcycle, bicycle, and parts manufacturing",FALSE,"336991",6,"PCU336991336991",1984
+"336992","Military armored vehicle, tank, and tank component manufacturing",FALSE,"33699",5,"PCU33699-33699-",2003
+"336999","All other transportation equipment manufacturing",FALSE,"336999",6,"PCU336999336999",2003
+"337110","Wood kitchen cabinet and countertop manufacturing",FALSE,"33711",5,"PCU33711-33711-",2003
+"337121","Upholstered household furniture manufacturing",FALSE,"337121",6,"PCU337121337121",1972
+"337122","Nonupholstered wood household furniture manufacturing",FALSE,"337122",6,"PCU337122337122",1972
+"33712N","Other household nonupholstered furniture",FALSE,"33712",5,"PCU33712-33712-",2003
+"337127","Institutional furniture manufacturing",FALSE,"337127",6,"PCU337127337127",2003
+"33721A","Office furniture and custom architectural woodwork and millwork manufacturing",FALSE,"33721",5,"PCU33721-33721-",2003
+"33721A","Office furniture and custom architectural woodwork and millwork manufacturing",FALSE,"337212",6,"PCU337212337212",2003
+"33721A","Office furniture and custom architectural woodwork and millwork manufacturing",FALSE,"337214",6,"PCU337214337214",1979
+"337215","Showcase, partition, shelving, and locker manufacturing",FALSE,"337215",6,"PCU337215337215",2003
+"337900","Other furniture related product manufacturing",FALSE,"337",3,"PCU337---337---",1984
+"339112","Surgical and medical instrument manufacturing",FALSE,"339112",6,"PCU339112339112",1982
+"339113","Surgical appliance and supplies manufacturing",FALSE,"339113",6,"PCU339113339113",1983
+"339114","Dental equipment and supplies manufacturing",FALSE,"339114",6,"PCU339114339114",1985
+"339115","Ophthalmic goods manufacturing",FALSE,"339115",6,"PCU339115339115",1983
+"339116","Dental laboratories",FALSE,"33911",5,"PCU33911-33911-",2003
+"339910","Jewelry and silverware manufacturing",FALSE,"33991",5,"PCU33991-33991-",1985
+"339920","Sporting and athletic goods manufacturing",FALSE,"33992",5,"PCU33992-33992-",2003
+"339930","Doll, toy, and game manufacturing",FALSE,"339",3,"PCU339---339---",2003
+"339940","Office supplies (except paper) manufacturing",FALSE,"339",3,"PCU339---339---",2003
+"339950","Sign manufacturing",FALSE,"33995",5,"PCU33995-33995-",2003
+"339990","All other miscellaneous manufacturing",FALSE,"339",3,"PCU339---339---",2003
+"311111","Dog and cat food manufacturing",FALSE,"311111",6,"PCU311111311111",1985
+"311119","Other animal food manufacturing",FALSE,"311119",6,"PCU311119311119",1976
+"311210","Flour milling and malt manufacturing",FALSE,"31121",5,"PCU31121-31121-",2003
+"311221","Wet corn milling",FALSE,"311221",6,"PCU311221311221",1985
+"311224","Soybean and other oilseed processing",FALSE,"311224",6,"PCU311224311224",2011
+"311225","Fats and oils refining and blending",FALSE,"311225",6,"PCU311225311225",1981
+"311230","Breakfast cereal manufacturing",FALSE,"31123",5,"PCU31123-31123-",2003
+"311300","Sugar and confectionery product manufacturing",FALSE,"3113",4,"PCU3113--3113--",1984
+"311410","Frozen food manufacturing",FALSE,"31141",5,"PCU31141-31141-",2003
+"311420","Fruit and vegetable canning, pickling, and drying",FALSE,"31142",5,"PCU31142-31142-",2003
+"31151A","Fluid milk and butter manufacturing",FALSE,"311511",6,"PCU311511311511",1982
+"31151A","Fluid milk and butter manufacturing",FALSE,"311512",6,"PCU311512311512",1984
+"311513","Cheese manufacturing",FALSE,"311513",6,"PCU311513311513",1972
+"311514","Dry, condensed, and evaporated dairy product manufacturing",FALSE,"311514",6,"PCU311514311514",1983
+"311520","Ice cream and frozen dessert manufacturing",FALSE,"31152",5,"PCU31152-31152-",2003
+"31161A","Animal (except poultry) slaughtering, rendering, and processing",FALSE,"311611",6,"PCU311611311611",1967
+"31161A","Animal (except poultry) slaughtering, rendering, and processing",FALSE,"311612",6,"PCU311612311612",1967
+"31161A","Animal (except poultry) slaughtering, rendering, and processing",FALSE,"311613",6,"PCU311613311613",1967
+"311615","Poultry processing",FALSE,"311615",6,"PCU311615311615",1981
+"311700","Seafood product preparation and packaging",FALSE,"3117",4,"PCU3117--3117--",2003
+"311810","Bread and bakery product manufacturing",FALSE,"31181",5,"PCU31181-31181-",2003
+"3118A0","Cookie, cracker, pasta, and tortilla manufacturing",FALSE,"31182",5,"PCU31182-31182-",2003
+"3118A0","Cookie, cracker, pasta, and tortilla manufacturing",FALSE,"3118",4,"PCU3118--3118--",2003
+"311910","Snack food manufacturing",FALSE,"31191",5,"PCU31191-31191-",2003
+"311920","Coffee and tea manufacturing",FALSE,"31192",5,"PCU31192-31192-",2003
+"311930","Flavoring syrup and concentrate manufacturing",FALSE,"31193",5,"PCU31193-31193-",2003
+"311940","Seasoning and dressing manufacturing",FALSE,"31194",5,"PCU31194-31194-",2003
+"311990","All other food manufacturing",FALSE,"31199",5,"PCU31199-31199-",2003
+"312110","Soft drink and ice manufacturing",FALSE,"31211",5,"PCU31211-31211-",2003
+"312120","Breweries",FALSE,"31212",5,"PCU31212-31212-",2003
+"312130","Wineries",FALSE,"31213",5,"PCU31213-31213-",2003
+"312140","Distilleries",FALSE,"31214",5,"PCU31214-31214-",2003
+"312200","Tobacco manufacturing",FALSE,"3122",4,"PCU3122--3122--",1984
+"313100","Fiber, yarn, and thread mills",FALSE,"3131",4,"PCU3131--3131--",1984
+"313200","Fabric mills",FALSE,"3132",4,"PCU3132--3132--",2003
+"313300","Textile and fabric finishing and fabric coating mills",FALSE,"3133",4,"PCU3133--3133--",2003
+"314110","Carpet and rug mills",FALSE,"31411",5,"PCU31411-31411-",1984
+"314120","Curtain and linen mills",FALSE,"31412",5,"PCU31412-31412-",2003
+"314900","Other textile product mills",FALSE,"3149",4,"PCU3149--3149--",2003
+"315000","Apparel manufacturing",FALSE,"315",3,"PCU315---315---",2003
+"322110","Pulp mills",FALSE,"32211",5,"PCU32211-32211-",1973
+"322120","Paper mills",FALSE,"32212",5,"PCU32212-32212-",1974
+"322130","Paperboard mills",FALSE,"32213",5,"PCU32213-32213-",1974
+"322210","Paperboard container manufacturing",FALSE,"32221",5,"PCU32221-32221-",1984
+"322220","Paper bag and coated and treated paper manufacturing",FALSE,"32222",5,"PCU32222-32222-",2003
+"322230","Stationery product manufacturing",FALSE,"32223",5,"PCU32223-32223-",2003
+"322291","Sanitary paper product manufacturing",FALSE,"322291",6,"PCU322291322291",2003
+"322299","All other converted paper product manufacturing",FALSE,"322299",6,"PCU322299322299",2003
+"323110","Printing",FALSE,"32311",5,"PCU32311-32311-",2003
+"323120","Support activities for printing",FALSE,"3231",4,"PCU3231--3231--",2003
+"324110","Petroleum refineries",FALSE,"32411",5,"PCU32411-32411-",1976
+"324121","Asphalt paving mixture and block manufacturing",FALSE,"324121",6,"PCU324121324121",1975
+"324122","Asphalt shingle and coating materials manufacturing",FALSE,"324122",6,"PCU324122324122",1975
+"324190","Other petroleum and coal products manufacturing",FALSE,"32419",5,"PCU32419-32419-",1984
+"325110","Petrochemical manufacturing",FALSE,"32511",5,"PCU32511-32511-",2003
+"325120","Industrial gas manufacturing",FALSE,"32512",5,"PCU32512-32512-",2003
+"325130","Synthetic dye and pigment manufacturing",FALSE,"32513",5,"PCU32513-32513-",2003
+"325180","Other basic inorganic chemical manufacturing",FALSE,"32518",5,"PCU32518-32518-",2003
+"325190","Other basic organic chemical manufacturing",FALSE,"32519",5,"PCU32519-32519-",2003
+"325211","Plastics material and resin manufacturing",FALSE,"325211",6,"PCU325211325211",1976
+"3252A0","Synthetic rubber and artificial and synthetic fibers and filaments manufacturing",FALSE,"325212",6,"PCU325212325212",1965
+"3252A0","Synthetic rubber and artificial and synthetic fibers and filaments manufacturing",FALSE,"32522",5,"PCU32522-32522-",2003
+"325411","Medicinal and botanical manufacturing",FALSE,"325411",6,"PCU325411325411",1982
+"325412","Pharmaceutical preparation manufacturing",FALSE,"325412",6,"PCU325412325412",1981
+"325413","In-vitro diagnostic substance manufacturing",FALSE,"325413",6,"PCU325413325413",1980
+"325414","Biological product (except diagnostic) manufacturing",FALSE,"325414",6,"PCU325414325414",1991
+"325310","Fertilizer manufacturing",FALSE,"32531",5,"PCU32531-32531-",2003
+"325320","Pesticide and other agricultural chemical manufacturing",FALSE,"32532",5,"PCU32532-32532-",2003
+"325510","Paint and coating manufacturing",FALSE,"32551",5,"PCU32551-32551-",1983
+"325520","Adhesive manufacturing",FALSE,"32552",5,"PCU32552-32552-",2003
+"325610","Soap and cleaning compound manufacturing",FALSE,"32561",5,"PCU32561-32561-",2003
+"325620","Toilet preparation manufacturing",FALSE,"32562",5,"PCU32562-32562-",2003
+"325910","Printing ink manufacturing",FALSE,"32591",5,"PCU32591-32591-",2003
+"3259A0","All other chemical product and preparation manufacturing",FALSE,"32592",5,"PCU32592-32592-",2006
+"3259A0","All other chemical product and preparation manufacturing",FALSE,"32599",5,"PCU32599-32599-",2003
+"326110","Plastics packaging materials and unlaminated film and sheet manufacturing",FALSE,"32611",5,"PCU32611-32611-",2003
+"326120","Plastics pipe, pipe fitting, and unlaminated profile shape manufacturing",FALSE,"32612",5,"PCU32612-32612-",2003
+"326130","Laminated plastics plate, sheet (except packaging), and shape manufacturing",FALSE,"32613",5,"PCU32613-32613-",2003
+"326140","Polystyrene foam product manufacturing",FALSE,"32614",5,"PCU32614-32614-",2003
+"326150","Urethane and other foam product (except polystyrene) manufacturing",FALSE,"32615",5,"PCU32615-32615-",2003
+"326160","Plastics bottle manufacturing",FALSE,"32616",5,"PCU32616-32616-",2003
+"326190","Other plastics product manufacturing",FALSE,"32619",5,"PCU32619-32619-",2003
+"326210","Tire manufacturing",FALSE,"32621",5,"PCU32621-32621-",1973
+"326220","Rubber and plastics hoses and belting manufacturing",FALSE,"32622",5,"PCU32622-32622-",2003
+"326290","Other rubber product manufacturing",FALSE,"32629",5,"PCU32629-32629-",1988
+"423100","Motor vehicle and motor vehicle parts and supplies",FALSE,"4231",4,"PCU4231--4231--",2009
+"423400","Professional and commercial equipment and supplies",FALSE,"4234",4,"PCU4234--4234--",2009
+"423600","Household appliances and electrical and electronic goods",FALSE,"4236",4,"PCU4236--4236--",2009
+"423800","Machinery, equipment, and supplies",FALSE,"4238",4,"PCU4238--4238--",2009
+"423A00","Other durable goods merchant wholesalers",FALSE,"4232",4,"PCU4232--4232--",2009
+"423A00","Other durable goods merchant wholesalers",FALSE,"4233",4,"PCU4233--4233--",2009
+"423A00","Other durable goods merchant wholesalers",FALSE,"4235",4,"PCU4235--4235--",2009
+"423A00","Other durable goods merchant wholesalers",FALSE,"4237",4,"PCU4237--4237--",2009
+"423A00","Other durable goods merchant wholesalers",FALSE,"4239",4,"PCU4239--4239--",2009
+"424200","Drugs and druggists' sundries",FALSE,"4242",4,"PCU4242--4242--",2009
+"424400","Grocery and related product wholesalers",FALSE,"4244",4,"PCU4244--4244--",2009
+"424700","Petroleum and petroleum products",FALSE,"4247",4,"PCU4247--4247--",2009
+"424A00","Other nondurable goods merchant wholesalers",FALSE,"4241",4,"PCU4241--4241--",2009
+"424A00","Other nondurable goods merchant wholesalers",FALSE,"4243",4,"PCU4243--4243--",2009
+"424A00","Other nondurable goods merchant wholesalers",FALSE,"4245",4,"PCU4245--4245--",2009
+"424A00","Other nondurable goods merchant wholesalers",FALSE,"4246",4,"PCU4246--4246--",2009
+"424A00","Other nondurable goods merchant wholesalers",FALSE,"4248",4,"PCU4248--4248--",2009
+"424A00","Other nondurable goods merchant wholesalers",FALSE,"4249",4,"PCU4249--4249--",2009
+"441000","Motor vehicle and parts dealers",FALSE,"441",3,"PCU441---441---",2003
+"445000","Food and beverage stores",FALSE,"445",3,"PCU445---445---",1999
+"452000","General merchandise stores",FALSE,"455",3,"PCU455---455---",2003
+"444000","Building material and garden equipment and supplies dealers",FALSE,"444",3,"PCU444---444---",2003
+"446000","Health and personal care stores",FALSE,"456",3,"PCU456---456---",2003
+"447000","Gasoline stations",FALSE,"457",3,"PCU457---457---",2022
+"448000","Clothing and clothing accessories stores",FALSE,"458",3,"PCU458---458---",2003
+"4B0000","All other retail",FALSE,"449",3,"PCU449---449---",2022
+"481000","Air transportation",FALSE,"481",3,"PCU481---481---",1992
+"482000","Rail transportation",FALSE,"482",3,"PCU482---482---",1996
+"483000","Water transportation",FALSE,"483",3,"PCU483---483---",2003
+"484000","Truck transportation",FALSE,"484",3,"PCU484---484---",2003
+"486000","Pipeline transportation",FALSE,"486",3,"PCU486---486---",2022
+"48A000","Scenic and sightseeing transportation and support activities",FALSE,"488",3,"PCU488---488---",2003
+"492000","Couriers and messengers",FALSE,"492",3,"PCU492---492---",2003
+"493000","Warehousing and storage",FALSE,"493",3,"PCU493---493---",1993
+"511110","Newspaper publishers",FALSE,"51311",5,"PCU51311-51311-",2022
+"511120","Periodical publishers",FALSE,"51312",5,"PCU51312-51312-",2022
+"511130","Book publishers",FALSE,"51313",5,"PCU51313-51313-",2022
+"5111A0","Directory, mailing list, and other publishers",FALSE,"51314",5,"PCU51314-51314-",2022
+"5111A0","Directory, mailing list, and other publishers",FALSE,"5131",4,"PCU5131--5131--",2022
+"511200","Software publishers",FALSE,"51321",5,"PCU51321-51321-",2003
+"515100","Radio and television broadcasting",FALSE,"5161",4,"PCU5161--5161--",2001
+"515200","Cable and other subscription programming",FALSE,"5162",4,"PCU5162--5162--",2003
+"517110","Wired telecommunications carriers",FALSE,"517311",6,"PCU517311517311",1995
+"517210","Wireless telecommunications carriers (except satellite)",FALSE,"517312",6,"PCU517312517312",1999
+"517A00","Satellite, telecommunications resellers, and all other telecommunications",FALSE,"517",3,"PCU517---517---",2003
+"518200","Data processing, hosting, and related services",FALSE,"5182",4,"PCU5182--5182--",2003
+"52A000","Monetary authorities and depository credit intermediation",FALSE,"5221",4,"PCU5221--5221--",2003
+"523A00","Securities and commodity contracts intermediation and brokerage",FALSE,"5231",4,"PCU5231--5231--",2000
+"523A00","Securities and commodity contracts intermediation and brokerage",FALSE,"523",3,"PCU523---523---",2003
+"523900","Other financial investment activities",FALSE,"523",3,"PCU523---523---",2003
+"524113","Direct life insurance carriers",FALSE,"524113",6,"PCU524113524113",1998
+"5241XX","Insurance carriers, except direct life",FALSE,"524114",6,"PCU524114524114",2002
+"5241XX","Insurance carriers, except direct life",FALSE,"52412",5,"PCU52412-52412-",1998
+"5241XX","Insurance carriers, except direct life",FALSE,"5241",4,"PCU5241--5241--",2003
+"524200","Insurance agencies, brokerages, and related activities",FALSE,"524",3,"PCU524---524---",2003
+"532100","Automotive equipment rental and leasing",FALSE,"5321",4,"PCU5321--5321--",2001
+"541100","Legal services",FALSE,"5411",4,"PCU5411--5411--",1996
+"541300","Architectural, engineering, and related services",FALSE,"5413",4,"PCU5413--5413--",1996
+"541610","Management consulting services",FALSE,"54161",5,"PCU54161-54161-",2006
+"5416A0","Environmental and other technical consulting services",FALSE,"5416",4,"PCU5416--5416--",2006
+"561300","Employment services",FALSE,"5613",4,"PCU5613--5613--",1996
+"621100","Offices of physicians",FALSE,"6211",4,"PCU6211--6211--",1996
+"621200","Offices of dentists",FALSE,"6212",4,"PCU6212--6212--",2010
+"621500","Medical and diagnostic laboratories",FALSE,"6215",4,"PCU6215--6215--",2003
+"621600","Home health care services",FALSE,"6216",4,"PCU6216--6216--",1996
+"622000","Hospitals",FALSE,"622",3,"PCU622---622---",1992
+"623A00","Nursing and community care facilities",FALSE,"6231",4,"PCU6231--6231--",2003
+"713100","Amusement parks and arcades",FALSE,"7131",4,"PCU7131--7131--",2006
+"721000","Accommodation",FALSE,"721",3,"PCU721---721---",1996
+"811300","Commercial and industrial machinery and equipment repair and maintenance",FALSE,"8113",4,"PCU8113--8113--",2006
+"491000","Postal service",FALSE,"491",3,"PCU491---491---",1972
